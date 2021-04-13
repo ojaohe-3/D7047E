@@ -14,7 +14,7 @@ from ModelTrainer import *
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+     transforms.Normalize((1, 1, 1), (1, 1, 1))])
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=transform)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     trainner2.train(net,10, "Adam LeakyReLu", writer)
     print("with optimizer Adam and Leaky ReLu:")
-    trainter2.validate(net)
+    trainner2.validate(net)
 
     # ==== With tanh ====
     trainner1.train(net1,10, "SGD tanh", writer)

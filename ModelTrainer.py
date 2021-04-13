@@ -49,6 +49,7 @@ class ModelTrainer:
         print('Finished Training')
 
     def validate(self, net):
+        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         print("testing network:")
         correct = 0
         total = 0
@@ -59,4 +60,4 @@ class ModelTrainer:
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-            print("total accuracy of net: " + correct/total)
+            print("total accuracy of net: %.2f%%" % (correct/total*100))
