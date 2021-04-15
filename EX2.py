@@ -48,24 +48,24 @@ if __name__ == '__main__':
     writer.add_graph(model, example)
     
      # === FineTunning ===
-    model1 = model    
-    model1.fc = nn.Linear(4096, 10)
+    model1 = torch.nn.Sequential(model, nn.Linear(1000, 10))
     writer.add_graph(model1, example)
 
     model1.to(device)
-    train(model1, 20, trainloader, optim.Adam(model1.parameters(), lr=0.001), title="Fine Tunning AlexNet On CIFAR-10", writer=writer)
-
+    train(model1, 25, trainloader, optim.Adam(model1.parameters(), lr=0.001), title="Fine Tunning AlexNet On CIFAR-10", writer=writer)
+    validate(model1, testloader)
     # === Feature Extraction Tunning ===
-    model2 = torchvision.models.alexnet(pretrained=True) 
+    model2 = torch.nn.Sequential(model, nn.Linear(1000, 10))
     # nn.Module object does not derive from PyObject so we have re download it.
     
     #disable trainning on all parameters
     for param in model2.parameters():
         param.requires_grad = False
     
-    model2.classifier[6] = nn.Linear(4096, 10)
+    
     model2.to(device)
     writer.add_graph(model2, example)
 
     optimizer = optim.Adam(model2.parameters(), lr=0.001)
     train(model2, 80, trainloader, optim.Adam(model1.parameters(), lr=0.001), title="Feature Extraction AlexNet On CIFAR-10", writer=writer)
+    validate(model2, testloader)
