@@ -45,24 +45,22 @@ if __name__ == '__main__':
     net.to(device)
     net1.to(device)
 
-    trainner1 = ModelTrainer(optim.SGD(net.parameters(), lr=0.0001), nn.CrossEntropyLoss(), trainloader, testloader)
-    trainner2 = ModelTrainer(optim.Adam(net.parameters(), lr=0.0001), nn.CrossEntropyLoss(), trainloader, testloader)
     #==== running test with leaky ReLU ====
-    trainner1.train(net,10, "SGD LeakyReLu", writer)
+    train(net,10, trainloader, optim.SGD(net.parameters(), lr=0.0001), "SGD LeakyReLu", writer)
     print("with optimizer SGD and Leaky ReLu:")
-    trainner1.validate(net)
+    validate(net, testloader)
     
 
-    trainner2.train(net,10, "Adam LeakyReLu", writer)
+    train(net,10, trainloader, optim.Adam(net.parameters(), lr=0.0001), "Adam LeakyReLu", writer)
     print("with optimizer Adam and Leaky ReLu:")
-    trainner2.validate(net)
+    validate(net, testloader)
 
     # ==== With tanh ====
-    trainner1.train(net1,10, "SGD tanh", writer)
+    train(net1,10, trainloader, optim.SGD(net.parameters(), lr=0.0001), "SGD tanh", writer)
     print("with optimizer SGD and tanh:")
-    trainner1.validate(net1)
+    validate(net, testloader)
     
-    trainner2.train(net1,10, "Adam tanh", writer)
+    train(net1,10, testloader, optim.Adam(net.parameters(), lr=0.0001), "Adam tanh", writer)
     print("with optimizer Adam and tanh:")
-    trainner2.validate(net1)
+    validate(net, testloader)
 
