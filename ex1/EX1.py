@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 
-from ex1.CNNLeReLu import CNNLeReLu
-from ex1.CNNTanh import CNNTanh
-from ModelTrainer import *
+from CNNLeReLu import CNNLeReLu
+from CNNTanh import CNNTanh
+from ModelTrainer import train, validate
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
