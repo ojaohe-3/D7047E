@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 from ModelTrainer import *
+from git.refs.head import HEAD
 
 transform_train = transforms.Compose([
     transforms.Resize(224),
