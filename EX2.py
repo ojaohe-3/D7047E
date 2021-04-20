@@ -24,11 +24,11 @@ transform_test = transforms.Compose([
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=transform_train)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=100,
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=200,
                                           shuffle=True)
 testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                        download=True, transform=transform_test)
-testloader = torch.utils.data.DataLoader(testset, batch_size=100,
+testloader = torch.utils.data.DataLoader(testset, batch_size=200,
                                          shuffle=False)
 
 classes = ('plane', 'car', 'bird', 'cat',
@@ -46,26 +46,28 @@ if __name__ == '__main__':
     data = iter(trainloader)
     example, _ = data.next()
     writer.add_graph(model, example)
-    
+    model.to(device)
+
      # === FineTunning ===
     model1 = torch.nn.Sequential(model, nn.Linear(1000, 10))
-    writer.add_graph(model1, example)
+    # writer.add_graph(model1, example)
 
     model1.to(device)
-    train(model1, 25, trainloader, optim.Adam(model1.parameters(), lr=0.001), title="Fine Tunning AlexNet On CIFAR-10", writer=writer)
+    train(model1, 4, trainloader, optim.SGD(model1.parameters(), lr=0.0001, momentum=0.09), title="Fine Tunning AlexNet On CIFAR-10", writer=writer)
     validate(model1, testloader)
     # === Feature Extraction Tunning ===
-    model2 = torch.nn.Sequential(model, nn.Linear(1000, 10))
     # nn.Module object does not derive from PyObject so we have re download it.
-    
-    #disable trainning on all parameters
-    for param in model2.parameters():
-        param.requires_grad = False
-    
-    
-    model2.to(device)
-    writer.add_graph(model2, example)
 
-    optimizer = optim.Adam(model2.parameters(), lr=0.001)
-    train(model2, 80, trainloader, optim.Adam(model1.parameters(), lr=0.001), title="Feature Extraction AlexNet On CIFAR-10", writer=writer)
+    #disable trainning on all parameters
+    for param in model.parameters():
+        param.requires_grad = False
+    model2 = torch.nn.Sequential(model, nn.Linear(1000, 10))
+    model2.to(device)
+
+    # writer.add_graph(model2, example)
+
+    train(model2, 4, trainloader, optim.Adam(model2.parameters(), lr=0.0001), title="Feature Extraction AlexNet On CIFAR-10", writer=writer)
     validate(model2, testloader)
+
+    torch.save(model1.state_dict(), "./models/alex_fine_tunning")
+    torch.save(model2.state_dict(), "./models/alex_feature_extract")
